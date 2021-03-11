@@ -2,6 +2,9 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+import csv
+
+
 
 def get_financials(url):
     page_source = requests.get(url)
@@ -42,9 +45,20 @@ def get_cashflow(symbol):
     url = 'https://finance.yahoo.com/quote/' + symbol + '/cash-flow'
     return get_financials(url)
 
+ti = []
+with open('S&P500_stock_info.csv', mode='r') as csv_file:
+    csv_reader =  csv.reader(csv_file)
+    for row in csv_reader:
+        ti.append(row[0])
+ti.pop(0)
 
-symbol = 'MSFT'
-# Functions return dataframe
-income_statement = get_income_statement(symbol)
-balance_sheet = get_balance_sheet(symbol)
-cash_flow = get_cashflow(symbol)
+for symbol in ti:
+    n1 = str(symbol) + '_income_statement.csv'
+    n2 = str(symbol) + '_balance_sheet.csv'
+    n3 = str(symbol) + '_cash_flow.csv'
+    income_statement = get_income_statement(symbol)
+    balance_sheet = get_balance_sheet(symbol)
+    cash_flow = get_cashflow(symbol)
+    income_statement.to_csv(str(n1), header=True)
+    balance_sheet.to_csv(str(n2), header=True)
+    cash_flow.to_csv(str(n3), header=True)
